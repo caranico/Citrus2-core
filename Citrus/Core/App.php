@@ -75,7 +75,8 @@ class App extends \Pimple implements TerminableInterface, ServiceContainerInterf
         $provider->register($this);
     }
 
-    public function set($id, $value, $force = false) {
+    public function set($id, $value, $force = false)
+    {
         if (!array_key_exists($id, $this->providers) || $force) {
 
         }
@@ -105,7 +106,7 @@ class App extends \Pimple implements TerminableInterface, ServiceContainerInterf
 
     public function get($id)
     {
-        if ( !isset( $this[$id] ) ) {
+        if (!isset($this[$id])) {
             throw new \InvalidArgumentException(sprintf('Service provider "%s" does not exist.', $id));
         }
         return $this[$id];
