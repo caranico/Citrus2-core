@@ -9,7 +9,7 @@ class ErrorController
      */
     public function doException($exception)
     {
-        $content .= '<pre class="message">' . get_class($exception) . ': ' . $exception->getMessage() . '</pre>'
+        $content = '<pre class="message">' . get_class($exception) . ': ' . $exception->getMessage() . '</pre>'
                    . '<p>'
                    . '<code>' . $exception->getFile() . '</code>, line ' . $exception->getLine() . '.'
                    . '</p>'
@@ -17,12 +17,12 @@ class ErrorController
                    . '<ol>';
         foreach ($exception->getTrace() as $tr) {
             $content .= '<li><code>';
-            if (isset($tr['class'])) $s .= $tr['class'];
+            if (isset($tr['class'])) $content .= $tr['class'] . '::';
 
             $content .= $tr['function'] . '</code> ';
 
-            if (isset($tr['file'])) $s .= '<i>' . $tr['file'] . '</i> ';
-            if (isset($tr['line'])) $s .= 'line ' . $tr['line'];
+            if (isset($tr['file'])) $content .= '<i>' . $tr['file'] . '</i> ';
+            if (isset($tr['line'])) $content .= 'line ' . $tr['line'];
 
             $content .= '</li>';
         }
