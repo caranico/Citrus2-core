@@ -30,10 +30,13 @@ class Router
 {
 
     private $request_uri;
+
     private $controller;
 
     private $routes = Array();
+
     private $route;
+
     private $params;
 
     public function __construct(Request $request)
@@ -100,10 +103,10 @@ class Router
         $this->controller = $controller;
     }
 
-    private function setRoute($route)
+    public function setRoute($route)
     {
         $this->route = $route;
-        $this->params = $this->route->params;
+        $this->params = $this->route->getParams();
     }
 
     public function getRoute()
@@ -119,7 +122,7 @@ class Router
     public function hasMatchedRoute()
     {
         // var_dump( $this->route instanceof Route);
-        return $this->route instanceof Route;
+        return $this->route !== null && $this->route instanceof Route;
     }
 
     public function getRoutes()

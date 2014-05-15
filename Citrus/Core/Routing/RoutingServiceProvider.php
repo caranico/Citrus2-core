@@ -2,11 +2,11 @@
 
 namespace Citrus\Core\Routing;
 use Citrus\Core\System\ServiceProviderInterface;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\HttpKernel\EventListener\RouterListener;
+// use Symfony\Component\Routing\RouteCollection;
+// use Symfony\Component\Routing\Route;
+// use Symfony\Component\Routing\Matcher\UrlMatcher;
+// use Symfony\Component\Routing\RequestContext;
+// use Symfony\Component\HttpKernel\EventListener\RouterListener;
 
 class RoutingServiceProvider implements ServiceProviderInterface
 {
@@ -21,16 +21,20 @@ class RoutingServiceProvider implements ServiceProviderInterface
 
     public function boot($app)
     {
-        $routes = new RouteCollection();
-        $context = new RequestContext();
-        $context->fromRequest($app['request']);
+        $app['event_dispatcher']->addSubscriber(new RouterListener($app));
 
+        $routes = $app['routes'];
+        $request = $app['request'];
         foreach ($app['routes'] as $k => $r) {
             if (array_key_exists("url", $r) && array_key_exists("target", $r)) {
-                $routes->add($k, new Route($r["url"], Array('_controller' => $r['target'])));
+                $conditions = array_key_exists("conditions", $r) ? $r['conditions'] : Array();
+                $route = new Route($r["url"], $request->getPathInfo(), $r['target'], $conditions);
+                if ($route->isMatched()) {
+                    $app['router']->setRoute($route);
+                    break;
+                }
             }
         }
-        $matcher = new UrlMatcher($routes, $context);
-        $app['event_dispatcher']->addSubscriber(new RouterListener($matcher));
     }
+
 }
